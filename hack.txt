@@ -1,0 +1,1825 @@
+#!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+#!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+#!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+#!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+#!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+  #!/usr/bin/env python3 """ make_tool_700.py
+
+Chạy file này sẽ tạo ra một file Python tên 'multi_tool_700.py' có 700 dòng. File đích là một "multi-tool" nhỏ (menu, mini-game, tiện ích) — chủ yếu để test khi bạn cần 1 file mã nguồn dài ~700 dòng.
+
+Usage: python3 make_tool_700.py
+
+Sau khi tạo xong, bạn có thể mở, chỉnh hoặc chạy 'multi_tool_700.py'. """
+
+import os import sys import textwrap from datetime import datetime
+
+TARGET = "multi_tool_700.py" LINE_TARGET = 700
+
+HEADER = textwrap.dedent(''' """ multi_tool_700.py
+
+Tệp code đa năng (được auto-generated). Mục đích: có ~700 dòng mã để test. Nội dung: menu, một số tiện ích nhỏ (calculator, ghi chú, random, mini game), và nhiều hàm dummy để đẩy số dòng lên ~700.
+
+Generated on: {date} """
+
+import os import sys import time import random from datetime import datetime
+
+Simple color helpers for terminals that support ANSI
+
+class Col: RESET = "\033[0m" BOLD = "\033[1m" RED = "\033[31m" GREEN = "\033[32m" YELLOW = "\033[33m" BLUE = "\033[34m"
+
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
+def banner(): clear() print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET) print(Col.GREEN + Col.BOLD + "        MULTI TOOL - 700 LINES TEST FILE" + Col.RESET) print(Col.BLUE + Col.BOLD + "="*60 + Col.RESET)
+
+-----------------------
+
+Utilities
+
+-----------------------
+
+def pause(): input('\nNhấn Enter để trở về menu...')
+
+def get_int(prompt, default=None): try: return int(input(prompt)) except Exception: return default
+
+-----------------------
+
+Module: Calculator
+
+-----------------------
+
+def calc(): banner() print("Calculator đơn giản. Nhập biểu thức Python (ví dụ: 2+3*4)") expr = input('> ') try: result = eval(expr, {"builtins": {}}, {}) print(f"Kết quả: {result}") except Exception as e: print("Lỗi khi tính:", e) pause()
+
+-----------------------
+
+Module: Notes (ghi + đọc)
+
+-----------------------
+
+NOTES_FILE = 'notes_tool_700.txt'
+
+def notes_menu(): banner() print('Notes - lưu và đọc nhanh') print('1) Thêm ghi chú') print('2) Đọc ghi chú') print('3) Xóa ghi chú (xóa file)') print('0) Quay lại') choice = input('> ') if choice == '1': add_note() elif choice == '2': read_notes() elif choice == '3': delete_notes() else: return
+
+def add_note(): txt = input('Nội dung ghi chú: ') + "\n" with open(NOTES_FILE, 'a', encoding='utf-8') as f: f.write(f"[{datetime.now()}] {txt}") print('Đã lưu.') pause()
+
+def read_notes(): if not os.path.exists(NOTES_FILE): print('Chưa có ghi chú.') else: with open(NOTES_FILE, 'r', encoding='utf-8') as f: print('\n' + f.read()) pause()
+
+def delete_notes(): if os.path.exists(NOTES_FILE): os.remove(NOTES_FILE) print('Đã xóa file ghi chú.') else: print('Không có file để xóa.') pause()
+
+-----------------------
+
+Module: Random utilities
+
+-----------------------
+
+def rand_menu(): banner() print('Random utilities') print('1) Sinh số ngẫu nhiên trong khoảng') print('2) Sinh mật khẩu ngẫu nhiên') print('0) Quay lại') c = input('> ') if c == '1': a = get_int('Min: ', 1) or 1 b = get_int('Max: ', 100) or 100 print('Số random:', random.randint(a, b)) pause() elif c == '2': n = get_int('Độ dài mật khẩu: ', 12) or 12 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()' pwd = ''.join(random.choice(chars) for _ in range(n)) print('Mật khẩu:', pwd) pause() else: return
+
+-----------------------
+
+Module: Mini games
+
+-----------------------
+
+def guess_number(): banner() print('Game: Đoán số (1-100)') target = random.randint(1, 100) tries = 0 while True: guess = get_int('Đoán: ', None) tries += 1 if guess is None: print('Nhập số hợp lệ.') continue if guess < target: print('Lớn hơn.') elif guess > target: print('Nhỏ hơn.') else: print(f'Chính xác trong {tries} lần!') break pause()
+
+def coin_flip(): banner() print('Quay đồng xu...') time.sleep(0.5) print('Kết quả:', random.choice(['Ngửa', 'Sấp'])) pause()
+
+-----------------------
+
+Module: File generator (sinh file lớn)
+
+-----------------------
+
+def generate_big_file(filename='bigfile_10mb.txt', size_mb=10): banner() print(f'Sinh file ~{size_mb} MB: {filename}') chunk = '0123456789ABCDEF' * 64  # ~1KB per 64 repetitions target_bytes = size_mb * 1024 * 1024 written = 0 with open(filename, 'w', encoding='utf-8') as f: while written < target_bytes: f.write(chunk + '\n') written += len(chunk) + 1 print('Hoàn thành.') pause()
+
+-----------------------
+
+Bulk dummy functions to increase lines
+
+(These functions do almost nothing; mục đích: tăng số dòng mã)
+
+-----------------------
+
+''').format(date=datetime.now().isoformat())
+
+DUMMY_BLOCK_START = "\n# --- DUMMY FUNCTIONS START ---\n" DUMMY_BLOCK_END = "\n# --- DUMMY FUNCTIONS END ---\n"
+
+We'll generate a set of small dummy functions to pad lines up to the requested amount.
+
+Each function will be compact but occupy one or two lines so the total file reaches ~700 lines.
+
+DUMMY_FUN_TEMPLATE = "def dummy_{n}():\n    """Dummy function #{n}"""\n    return {n}\n\n"
+
+FOOTER = textwrap.dedent('''
+
+-----------------------
+
+Main menu
+
+-----------------------
+
+def main_menu(): while True: banner() print('1) Calculator') print('2) Notes') print('3) Random utilities') print('4) Mini games') print('5) Sinh file lớn (test dung lượng)') print('6) In vài thông tin hệ thống') print('0) Thoát') ch = input('> ') if ch == '1': calc() elif ch == '2': notes_menu() elif ch == '3': rand_menu() elif ch == '4': # sub-menu for games banner() print('a) Đoán số') print('b) Quay đồng xu') print('0) Quay lại') sub = input('> ') if sub == 'a': guess_number() elif sub == 'b': coin_flip() else: pass elif ch == '5': generate_big_file() elif ch == '6': print('Platform:', sys.platform) print('Python version:', sys.version) pause() elif ch == '0': print('Bye!') break else: print('Lựa chọn không hợp lệ.') pause()
+
+if name == 'main': try: main_menu() except KeyboardInterrupt: print('\nNgắt bằng bàn phím. Tạm biệt.') ''')
+
+def make_dummy_block(target_total_lines, header_lines): # Estimate how many dummy functions needed. Each dummy fun template has ~3 lines plus blank line => ~4 lines per_func_lines = 4 remaining = target_total_lines - header_lines if remaining <= 0: return '' n_funcs = max(0, remaining // per_func_lines) # Ensure at least 10 dummy functions n_funcs = max(n_funcs, 10) # But cap to avoid huge numbers n_funcs = min(n_funcs, 1000) block = [] for i in range(1, n_funcs + 1): block.append(DUMMY_FUN_TEMPLATE.format(n=i)) return ''.join(block), n_funcs * per_func_lines
+
+def create_target_file(): # First, assemble parts and estimate current lines header_lines = HEADER.count('\n') + 1  # approximate footer_lines = FOOTER.count('\n') + 1
+
+# Create dummy block to fill up
+dummy_block_str, added_lines = make_dummy_block(LINE_TARGET, header_lines + footer_lines)
+
+content = HEADER + DUMMY_BLOCK_START + dummy_block_str + DUMMY_BLOCK_END + FOOTER
+
+# Count lines and if still short, append blank lines
+actual_lines = content.count('\n') + 1
+if actual_lines < LINE_TARGET:
+    needed = LINE_TARGET - actual_lines
+    content += '\n' * needed
+
+with open(TARGET, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print(f"Đã tạo '{TARGET}' với khoảng {LINE_TARGET} dòng (thực tế ~{actual_lines}).")
+
+if name == 'main': create_target_file() print('Xong. Bạn có thể chạy: python3', TARGET)
+
+  
